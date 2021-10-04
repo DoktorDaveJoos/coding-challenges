@@ -1,32 +1,72 @@
-/**
- * Some predefined delay values (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
+export function countSubarrays(arr: number[] ): number[] {
+
+  const count: number[] = [];
+
+  arr.forEach((value, index, full) => {
+
+    // its at least 1 everytime
+    let tmp = 1;
+
+    // count leading arrays
+    if (index !== 0) {
+      let ii = index - 1;
+      while (ii >= 0 && full[ii] <= value) {
+        tmp += 1;
+        ii --;
+      }
+    }
+
+    // count trailing arrays
+    if (index !== full.length - 1) {
+      let ii = index + 1;
+      while (ii <= full.length - 1 && full[ii] <= value) {
+        tmp += 1;
+        ii ++;
+      }
+    }
+
+    count.push(tmp);
+  })
+
+  return count;
 }
 
-/**
- * Returns a Promise<string> that resolves after a given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - A number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
+export function findWord(word: string, subArrays: string[][]): boolean {
+
+  let found = true;
+
+  [...word].forEach((val, i, arr) => {
+    // no next character
+    if(!arr[i+1]) return;
+
+    // find entry in 2 dim array
+    const x = subArrays.findIndex(a => a.includes(val));
+    const y = subArrays[x].findIndex(a => a === val);
+
+    // find entry of next in 2 dim array
+    const next = arr[i+1];
+    const xn = subArrays.findIndex( a => a.includes(next));
+    const yn = subArrays[xn].findIndex(a => a === next);
+
+    // first case: is on x axis
+    if (y === yn && Math.abs(x - xn) === 1) return;
+    // second case: is on y axis
+    if (x === xn && Math.abs(y - yn) === 1) return;
+
+    found = false;
+  })
+  return found;
 }
 
-// Below are examples of using ESLint errors suppression
-// Here it is suppressing a missing return type definition for the greeter function.
+export function foregoneSolution(n: number): number[] {
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export async function greeter(name: string) {
-  return await delayedHello(name, Delays.Long);
+  for( var i = 1; i < n; i ++) {
+    if(!(n - i).toString().includes('4') && !i.toString().includes('4')) break;
+  }
+
+  return [i, n - i];
 }
+
+
+
+
